@@ -6,12 +6,11 @@ alice() ->
         {message, Msg} ->
                 io:fwrite("Alice got a message \"~s\"~n", [Msg]),
                 alice();
-        finished -> io:fwrite("Alice is finished~n")
+        finished -> done
     end.
 
 bob(0, PId) ->
-    PId ! finished,
-    io:fwrite("Bob is finished\n");
+    PId ! finished;
 bob(N, PId) ->
     PId ! {message, "The message"},
     bob(N - 1, PId).
