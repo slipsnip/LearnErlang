@@ -3,8 +3,9 @@
 
 alice() ->
     receive
-        {message, PId} ->
+        {{message, Msg}, PId} ->
                 io:fwrite("Alice got a message~n"),
+                io:fwrite("Message: ~s~n", [Msg]),
                 PId ! message,
                 alice();
         finished -> io:fwrite("Alice is finished~n")
@@ -14,7 +15,7 @@ bob(0, PId) ->
     PId ! finished,
     io:fwrite("Bob is finished\n");
 bob(N, PId) ->
-    PId ! {message, self()},
+    PId ! {{message, "The message"}, self()},
     receive
         message -> io:fwrite("Bob got a message~n")
     end,
