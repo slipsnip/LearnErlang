@@ -1,5 +1,5 @@
 -module(talk).
--export([alice/0, bob/2, run/0]).
+-export([alice/0, bob/1, run/0]).
 
 alice() ->
     receive
@@ -9,12 +9,12 @@ alice() ->
         finished -> done
     end.
 
-bob(0, PId) ->
-    PId ! finished;
-bob(N, PId) ->
-    PId ! {message, "The message"},
-    bob(N - 1, PId).
+bob(0) ->
+    alice ! finished;
+bob(N) ->
+    alice ! {message, "The message"},
+    bob(N - 1).
 
 run() ->
-    PId = spawn(talk, alice, []),
-    spawn(talk, bob, [3, PId]).
+    register(alice, spawn(talk, alice, [])),
+    register(bob, spawn(talk, bob, [3])).
